@@ -49,9 +49,12 @@ class OwnerController {
 	private static final String VIEWS_OWNER_CREATE_OR_UPDATE_FORM = "owners/createOrUpdateOwnerForm";
 
 	private final OwnerRepository owners;
+	private final VisitRepository visits;
 
-	public OwnerController(OwnerRepository owners) {
+
+	public OwnerController(OwnerRepository owners, VisitRepository visits) {
 		this.owners = owners;
+		this.visits = visits;
 	}
 
 	@InitBinder
@@ -166,6 +169,14 @@ class OwnerController {
 		Optional<Owner> optionalOwner = this.owners.findById(ownerId);
 		Owner owner = optionalOwner.orElseThrow(() -> new IllegalArgumentException(
 				"Owner not found with id: " + ownerId + ". Please ensure the ID is correct "));
+
+		// Loop through each pet and set its visits manually
+		for (Pet pet : owner.getPets()) {
+			List<Visit> visitList = visits.findByPetId(pet.getId());
+			pet.getVisits().clear();
+			pet.getVisits().addAll(visitList);
+		}
+
 		mav.addObject(owner);
 		return mav;
 	}

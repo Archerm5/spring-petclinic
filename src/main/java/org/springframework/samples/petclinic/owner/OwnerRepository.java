@@ -69,4 +69,9 @@ public interface OwnerRepository extends JpaRepository<Owner, Integer> {
 	 */
 	Optional<Owner> findById(@Nonnull Integer id);
 
+	/**
+	 * Returns all the owners from data store
+	 **/
+	Page<Owner> findAll(Pageable pageable);
+
 }
